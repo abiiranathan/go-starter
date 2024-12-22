@@ -1,0 +1,15 @@
+{
+  "name": "go-starter",
+  "version": "1.0.0",
+  "description": "A skelton repository for getting started with a modern go application.",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@tailwindcss/forms": "^0.5.9",
+    "tailwindcss": "^3.4.17"
+  }
+}
