@@ -1,0 +1,7 @@
+{
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/*_templ.go": true,
+    "**/*_templ.txt": true
+  }
+}

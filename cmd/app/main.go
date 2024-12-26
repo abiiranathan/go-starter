@@ -10,7 +10,7 @@ import (
 
 	"github.com/abiiranathan/go-starter/config"
 	"github.com/abiiranathan/go-starter/internal/handler"
-	"github.com/go-chi/chi/v5"
+	"github.com/abiiranathan/rex"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -85,10 +85,10 @@ func main() {
 	log.Println("connected to database")
 
 	// Initialize the chi router
-	mux := chi.NewRouter()
+	r := rex.NewRouter()
 
 	// Initialize the handler and inject the sqlc.Querier
-	handler := handler.NewHandler(mux, pool)
+	handler := handler.NewHandler(r, pool)
 
 	// Setup the routes
 	handler.SetupRoutes()
@@ -97,5 +97,5 @@ func main() {
 	addr := fmt.Sprintf(":%s", cfg.Port)
 	log.Println("server is running on port", cfg.Port)
 
-	log.Fatalln(http.ListenAndServe(addr, mux))
+	log.Fatalln(http.ListenAndServe(addr, r))
 }

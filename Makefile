@@ -42,7 +42,7 @@ build: generate
 	go build -ldflags "-s -w" -o $(TARGET) cmd/app/*.go
 
 watch: 
-	npx tailwindcss -i cmd/app/static/css/input.css -o cmd/app/static/css/styles.css --watch
+	npx tailwindcss -i assets/static/css/input.css -o assets/static/css/styles.css --watch
 	
 dev:
 	air -c .air.toml

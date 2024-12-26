@@ -1,0 +1,20 @@
+@import url("./variables.css");
+@import url("./header.css");
+
+@layer base {
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply font-sans text-base text-gray-800 bg-gray-50 min-h-screen grid grid-rows-[auto_1fr_auto];
+
+    font-family: "Inter", sans-serif;
+    font-kerning: normal;
+    font-feature-settings: "kern" 1;
+  }
+
+  #main {
+    padding: var(--main-padding);
+  }
+}

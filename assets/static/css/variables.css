@@ -1,0 +1,12 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color1: #0f1016;
+  --text-color: #f0f0f0;
+  --accent-color: #006aff;
+  --sidebar-width: 300px;
+  --color-hover: rgb(241, 21, 241);
+  --main-padding: 2rem;
+}

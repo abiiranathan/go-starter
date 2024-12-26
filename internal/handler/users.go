@@ -3,11 +3,10 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
-	"strconv"
 
 	"github.com/abiiranathan/go-starter/cmd/app/sqlc"
 	"github.com/abiiranathan/go-starter/internal"
-	"github.com/go-chi/chi/v5"
+	"github.com/abiiranathan/rex"
 )
 
 type userService struct {
@@ -18,137 +17,112 @@ type userService struct {
 func UserRoutes(h *handler) {
 	userApi := &userService{handler: h}
 
-	h.router.Route("/users", func(r chi.Router) {
-		r.Get("/", userApi.listUsers)
-		r.Post("/", userApi.createUser)
-		r.Get("/{id}", userApi.getUser)
-		r.Put("/{id}", userApi.updateUser)
-		r.Delete("/{id}", userApi.deleteUser)
-	})
+	users := h.router.Group("/users")
+
+	users.GET("/", userApi.listUsers)
+	users.POST("/", userApi.createUser)
+	users.GET("/{id}", userApi.getUser)
+	users.PUT("/{id}", userApi.updateUser)
+	users.DELETE("/{id}", userApi.deleteUser)
 }
 
-func (svc *userService) listUsers(w http.ResponseWriter, r *http.Request) {
+func (svc *userService) listUsers(c *rex.Context) error {
 	const redisKey = "users"
 
 	// Check if the data is cached in Redis
-	data, err := svc.handler.redis.Get(r.Context(), redisKey).Result()
+	data, err := svc.handler.redis.Get(c.Request.Context(), redisKey).Result()
 	if err == nil {
 		var users []sqlc.User
 		err = json.Unmarshal([]byte(data), &users)
 		if err != nil {
-			svc.handler.SendError(w, r, err)
-			return
+			return err
 		}
-
-		w.Header().Set("X-Cache", "HIT")
-		svc.handler.Json(w, users, http.StatusOK)
-		return
+		c.SetHeader("X-Cache", "HIT")
+		return c.JSON(users)
 	}
 
 	// If the data is not cached, fetch it from the database
-	users, err := svc.handler.querier.ListUsers(r.Context())
+	users, err := svc.handler.querier.ListUsers(c.Request.Context())
 	if err != nil {
-		svc.handler.SendError(w, r, err)
-		return
+		return err
 	}
 
 	// Cache the data in Redis
 	b, err := json.Marshal(users)
 	if err != nil {
-		svc.handler.SendError(w, r, err)
-		return
+		return err
 	}
 
 	// Cache the data in Redis
-	err = svc.handler.redis.Set(r.Context(), redisKey, b, 0).Err()
+	err = svc.handler.redis.Set(c.Request.Context(), redisKey, b, 0).Err()
 	if err != nil {
-		svc.handler.SendError(w, r, err)
-		return
+		return err
 	}
 
-	w.Header().Set("X-Cache", "MISS")
-	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(b)
+	c.SetHeader("X-Cache", "MISS")
+	return c.JSON(users)
 }
 
-func (svc *userService) createUser(w http.ResponseWriter, r *http.Request) {
+func (svc *userService) createUser(c *rex.Context) error {
 	var payload sqlc.CreateUserParams
-	err := json.NewDecoder(r.Body).Decode(&payload)
+	err := c.BodyParser(&payload)
 	if err != nil {
-		svc.handler.SendError(w, r, err)
-		return
+		return err
 	}
 
 	// Hash the password before storing it in the database
 	hashedPassword, err := internal.HashPassword(payload.PasswordHash)
 	if err != nil {
-		svc.handler.SendError(w, r, err)
-		return
+		return err
 	}
 	payload.PasswordHash = hashedPassword
 
 	// Create the user
-	user, err := svc.handler.querier.CreateUser(r.Context(), payload)
+	user, err := svc.handler.querier.CreateUser(c.Request.Context(), payload)
 	if err != nil {
-		svc.handler.SendError(w, r, err)
-		return
+		return err
 	}
-	svc.handler.Json(w, user, http.StatusCreated)
+
+	c.WriteHeader(http.StatusCreated)
+	return c.JSON(user)
 }
 
-func (svc *userService) getUser(w http.ResponseWriter, r *http.Request) {
-	userId := r.PathValue("id")
-	id, err := strconv.Atoi(userId)
-	if err != nil {
-		svc.handler.SendError(w, r, err)
-		return
-	}
+func (svc *userService) getUser(c *rex.Context) error {
+	userId := c.ParamInt("id")
 
-	user, err := svc.handler.querier.GetUserByID(r.Context(), int64(id))
+	user, err := svc.handler.querier.GetUserByID(c.Request.Context(), int64(userId))
 	if err != nil {
-		svc.handler.SendError(w, r, err)
-		return
+		return err
 	}
-	svc.handler.Json(w, user, http.StatusOK)
+	return c.JSON(user)
 }
 
-func (svc *userService) updateUser(w http.ResponseWriter, r *http.Request) {
+func (svc *userService) updateUser(c *rex.Context) error {
 	var payload sqlc.UpdateUserParams
-	err := json.NewDecoder(r.Body).Decode(&payload)
+	err := c.BodyParser(&payload)
 	if err != nil {
-		svc.handler.SendError(w, r, err)
-		return
+		return err
 	}
 
-	userId := r.PathValue("id")
-	id, err := strconv.Atoi(userId)
+	userId := c.ParamInt("id")
+
+	payload.ID = int64(userId)
+	user, err := svc.handler.querier.UpdateUser(c.Request.Context(), payload)
 	if err != nil {
-		svc.handler.SendError(w, r, err)
-		return
+		return err
 	}
 
-	payload.ID = int64(id)
-	user, err := svc.handler.querier.UpdateUser(r.Context(), payload)
-	if err != nil {
-		svc.handler.SendError(w, r, err)
-		return
-	}
-	svc.handler.Json(w, user, http.StatusOK)
+	return c.JSON(user)
 }
 
-func (svc *userService) deleteUser(w http.ResponseWriter, r *http.Request) {
-	userId := r.PathValue("id")
-	id, err := strconv.Atoi(userId)
+func (svc *userService) deleteUser(c *rex.Context) error {
+	userId := c.ParamInt("id")
+
+	err := svc.handler.querier.DeleteUser(c.Request.Context(), int64(userId))
 	if err != nil {
-		svc.handler.SendError(w, r, err)
-		return
+		return err
 	}
 
-	err = svc.handler.querier.DeleteUser(r.Context(), int64(id))
-	if err != nil {
-		svc.handler.SendError(w, r, err)
-		return
-	}
-	svc.handler.Json(w, nil, http.StatusNoContent)
+	c.WriteHeader(http.StatusNoContent)
+	return c.JSON(nil)
 }
