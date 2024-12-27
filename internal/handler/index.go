@@ -7,10 +7,10 @@ import (
 
 func IndexRoute(h *handler) {
 	h.router.GET("/", func(c *rex.Context) error {
-		return RenderPage(c, templates.Index())
+		return RenderComponent(c, templates.Index())
 	})
 
 	h.router.GET("/offline", func(c *rex.Context) error {
-		return RenderPage(c, templates.OfflinePage())
+		return RenderComponent(c, templates.OfflinePage())
 	})
 }

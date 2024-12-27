@@ -65,6 +65,11 @@ func (svc *userService) listUsers(c *rex.Context) error {
 
 func (svc *userService) createUser(c *rex.Context) error {
 	var payload sqlc.CreateUserParams
+
+	// BodyParser reads the request body and unmarshals it into the provided struct.
+	// It also parses the request body based on the Content-Type header. e.g application/json, application/x-www-form-urlencoded,
+	// multipart/form-data and application/xml.
+	// It also validates the request body based on the struct tags using the go-playground/validator package.
 	err := c.BodyParser(&payload)
 	if err != nil {
 		return err

@@ -48,6 +48,12 @@ func (h *handler) Pool() *pgxpool.Pool {
 	return h.pool
 }
 
+func RenderComponent(c *rex.Context, component templ.Component) error {
+	c.Response.Header().Set("Content-Type", "text/html")
+	c.WriteHeader(http.StatusOK)
+	return templates.Layout(component).Render(c.Request.Context(), c.Response)
+}
+
 func (h *handler) SetupRoutes() {
 	AttachMiddleware(h.router)
 	StaticRoutes(h.router)
@@ -56,10 +62,4 @@ func (h *handler) SetupRoutes() {
 	UserRoutes(h)
 
 	// Add more routes here
-}
-
-func RenderPage(c *rex.Context, component templ.Component) error {
-	c.Response.Header().Set("Content-Type", "text/html")
-	c.WriteHeader(http.StatusOK)
-	return templates.Layout(component).Render(c.Request.Context(), c.Response)
 }
