@@ -1,7 +1,7 @@
 github.com/a-h/templ v0.2.793 h1:Io+/ocnfGWYO4VHdR0zBbf39PQlnzVCVVD+wEEs6/qY=
 github.com/a-h/templ v0.2.793/go.mod h1:lq48JXoUvuQrU0VThrK31yFwdRjTCnIE5bcPCM9IP1w=
-github.com/abiiranathan/rex v0.3.3 h1:4PqQtdmWAWUuNywg6qob2J8Z1N6EdizYHl5BfH66PlI=
-github.com/abiiranathan/rex v0.3.3/go.mod h1:7FJRisc0XUc2Ae+x4v3qhcYltwhIhUMzDUuJ6TleKK8=
+github.com/abiiranathan/rex v0.3.4 h1:bn17jwfUPbZdsa7z7Ng96PEM6KyuTq3bAEoMVpdyHJ4=
+github.com/abiiranathan/rex v0.3.4/go.mod h1:7FJRisc0XUc2Ae+x4v3qhcYltwhIhUMzDUuJ6TleKK8=
 github.com/bsm/ginkgo/v2 v2.12.0 h1:Ny8MWAHyOepLGlLKYmXG4IEkioBysk6GpaRTLC8zwWs=
 github.com/bsm/ginkgo/v2 v2.12.0/go.mod h1:SwYbGRRDovPVboqFv0tPTcG1sN61LM1Z4ARdbAV9g4c=
 github.com/bsm/gomega v1.27.10 h1:yeMWxP2pV2fG3FgAODIY8EiRE3dy0aeFYt4l7wh6yKA=
