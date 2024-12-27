@@ -8,6 +8,7 @@ import (
 )
 
 func StaticRoutes(r *rex.Router) {
+	// maxAge of 0 means no cache
 	maxAge := time.Hour * 24 * 30 // 30 days
 	r.StaticFS("/static", rex.CreateFileSystem(assets.Static, "static"), int(maxAge.Seconds()))
 }

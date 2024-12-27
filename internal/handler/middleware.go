@@ -1,7 +1,7 @@
 package handler
 
 import (
-	"time"
+	"net/http"
 
 	"github.com/abiiranathan/rex"
 	"github.com/abiiranathan/rex/middleware/logger"
@@ -13,8 +13,15 @@ func AttachMiddleware(r *rex.Router) {
 	r.Use(recovery.New(false, nil))
 	r.Use(r.WrapMiddleware(middleware.RequestID))
 	r.Use(r.WrapMiddleware(middleware.RealIP))
-	r.Use(logger.New(logger.DefaultConfig))
 
-	r.Use(r.WrapMiddleware(middleware.Timeout(time.Second * 30)))
+	cfg := logger.DefaultConfig
+	cfg.Callback = func(r *http.Request, args ...any) []any {
+		newArgs := []any{"Request ID", middleware.GetReqID(r.Context())}
+		// ADD USER ID HERE
+		return append(newArgs, args...)
+	}
+
+	r.Use(logger.New(cfg))
+
 	r.Use(r.WrapMiddleware(middleware.Heartbeat("/ping")))
 }
