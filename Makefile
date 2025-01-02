@@ -6,10 +6,6 @@ endif
 
 DATABASE_URL := $(shell echo $$DATABASE_URL)
 
-ifeq ($(DATABASE_URL),)
-$(error DATABASE_URL is not set)
-endif
-
 MIGRATIONS = cmd/app/sqlc/migrations
 TARGET = bin/app
 
