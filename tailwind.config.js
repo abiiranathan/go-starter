@@ -2,7 +2,7 @@ import defaultTheme from "tailwindcss/defaultTheme";
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./templates/**/*.{html,templ,tmpl}"],
+  content: ["views/templates/**/*.{html,templ,tmpl}"],
   theme: {
     extend: {
       screens: {

@@ -6,8 +6,12 @@ endif
 
 DATABASE_URL := $(shell echo $$DATABASE_URL)
 
-MIGRATIONS = cmd/app/sqlc/migrations
-TARGET = bin/app
+MIGRATIONS = sqlc/migrations
+TARGET = bin/server
+
+# Build the app
+build: generate
+	CGO_ENABLED=0 go build -ldflags "-s -w" -o $(TARGET) cmd/server/*.go
 
 # Install dependencies
 install:
@@ -40,15 +44,11 @@ down:
 # Generate sqlc and tailwindcss
 generate: 
 	sqlc generate
-	npx tailwindcss -i assets/static/css/input.css -o assets/static/css/styles.css
-
-# Build the app
-build: generate
-	go build -ldflags "-s -w" -o $(TARGET) cmd/app/*.go
+	bunx tailwindcss -i assets/static/css/input.css -o assets/static/css/styles.css
 
 # Watch tailwindcss changes
 watch: 
-	npx tailwindcss -i assets/static/css/input.css -o assets/static/css/styles.css --watch
+	bunx tailwindcss -i assets/static/css/input.css -o assets/static/css/styles.css --watch
 	
 # dev uses air to watch for changes and rebuild the app
 dev:

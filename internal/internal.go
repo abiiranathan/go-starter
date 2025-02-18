@@ -12,9 +12,9 @@ import (
 	"unicode"
 	"unsafe"
 
-	cryptoRand "crypto/rand"
-	"math/rand"
-	randV2 "math/rand/v2"
+	crypto_rand "crypto/rand"
+	math_rand "math/rand"
+	randv2 "math/rand/v2"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -26,7 +26,7 @@ const (
 	letterIdxMax  = 63 / letterIdxBits   // # of letter indices fitting in 63 bits
 )
 
-var src = rand.NewSource(time.Now().UnixNano())
+var src = math_rand.NewSource(time.Now().UnixNano())
 
 // RandomString generates a random string of length n.
 // https://stackoverflow.com/questions/22892120/how-to-generate-a-random-string-of-a-fixed-length-in-go
@@ -51,17 +51,17 @@ func RandomString(n int) string {
 
 // RandomInt generates a random integer between min and max(inclusive).
 func RandomInt(min, max int) int {
-	return rand.Intn(max-min) + min
+	return math_rand.Intn(max-min) + min
 }
 
 // RandomInt64 generates a random int64 between min and max(inclusive).
 func RandomInt64(min, max int64) int64 {
-	return rand.Int63n(max-min) + min
+	return math_rand.Int63n(max-min) + min
 }
 
 // RandomFloat generates a random float between min and max(inclusive).
 func RandomFloat(min, max float64) float64 {
-	return min + rand.Float64()*(max-min)
+	return min + math_rand.Float64()*(max-min)
 }
 
 // HashPassword hashes a password using bcrypt.
@@ -76,7 +76,7 @@ func HashPassword(password string) (string, error) {
 // ChaCha8 function that generates a random byte slice using the ChaCha8 algorithm.
 func ChaCha8() ([]byte, error) {
 	seed := [32]byte{}
-	chacha8Seed := randV2.NewChaCha8(seed)
+	chacha8Seed := randv2.NewChaCha8(seed)
 	randomBytes := make([]byte, 32)
 
 	n, err := chacha8Seed.Read(randomBytes)
@@ -106,12 +106,7 @@ func IsStrongPassword(password string) bool {
 		return false
 	}
 
-	var (
-		hasUpper   bool
-		hasLower   bool
-		hasNumber  bool
-		hasSpecial bool
-	)
+	var hasUpper, hasLower, hasNumber, hasSpecial bool
 
 	for _, char := range password {
 		switch {
@@ -132,7 +127,7 @@ func IsStrongPassword(password string) bool {
 // GenerateSecureToken generates a cryptographically secure random token of specified length.
 func GenerateSecureToken(length int) (string, error) {
 	bytes := make([]byte, length)
-	if _, err := cryptoRand.Read(bytes); err != nil {
+	if _, err := crypto_rand.Read(bytes); err != nil {
 		return "", err
 	}
 	return hex.EncodeToString(bytes), nil
@@ -141,7 +136,7 @@ func GenerateSecureToken(length int) (string, error) {
 // GenerateBase64Token generates a base64-encoded secure random token.
 func GenerateBase64Token(length int) (string, error) {
 	bytes := make([]byte, length)
-	if _, err := cryptoRand.Read(bytes); err != nil {
+	if _, err := crypto_rand.Read(bytes); err != nil {
 		return "", err
 	}
 	return base64.URLEncoding.EncodeToString(bytes), nil

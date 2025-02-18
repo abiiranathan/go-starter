@@ -1,1 +1,0 @@
-<h1 class=\"text-3xl\">Welcome to go starter project!</h1>
