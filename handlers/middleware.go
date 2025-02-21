@@ -24,7 +24,4 @@ func AttachMiddleware(r *rex.Router) {
 	}
 
 	r.Use(logger.New(loggerCfg))
-
-	// Wrapping a standard go middleware
-	r.Use(r.WrapMiddleware(middleware.Heartbeat("/ping")))
 }

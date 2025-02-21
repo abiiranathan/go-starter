@@ -10,7 +10,6 @@ import (
 	"strings"
 	"time"
 	"unicode"
-	"unsafe"
 
 	crypto_rand "crypto/rand"
 	math_rand "math/rand"
@@ -46,7 +45,7 @@ func RandomString(n int) string {
 		remain--
 	}
 
-	return *(*string)(unsafe.Pointer(&b))
+	return string(b)
 }
 
 // RandomInt generates a random integer between min and max(inclusive).
@@ -241,12 +240,12 @@ func FormatFileSize(bytes int64) string {
 // {{ dict "key1" "value1" "key2" "value2" }}.
 // This is useful because the template engine does not support passing multiple values directly
 // to child components.
-func Dict(values ...interface{}) (map[string]interface{}, error) {
+func Dict(values ...any) (map[string]any, error) {
 	if len(values)%2 != 0 {
 		return nil, errors.New("invalid dict call")
 	}
 
-	dict := make(map[string]interface{}, len(values)/2)
+	dict := make(map[string]any, len(values)/2)
 	for i := 0; i < len(values); i += 2 {
 		key, ok := values[i].(string)
 		if !ok {

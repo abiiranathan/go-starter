@@ -17,6 +17,7 @@ import (
 )
 
 var tmpl = Must(views.Templates(template.FuncMap{}))
+
 var tmplOptions = []rex.RouterOption{
 	rex.WithTemplates(tmpl),
 	rex.BaseLayout("templates/layout.html"),

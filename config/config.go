@@ -10,8 +10,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-// Application configuration struct.
-// Populated from yaml or environment file.
+// Application configuration struct populated from yaml or environment file.
 /*
 Corresponding Environment variables:
 

@@ -11,7 +11,7 @@ type Handler interface {
 	// SetupRoutes sets up all routes for the application
 	SetupRoutes()
 
-	// Conn returns the database connection pool
+	// Pool returns the database connection pool
 	Pool() *pgxpool.Pool
 }
 
