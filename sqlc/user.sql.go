@@ -30,16 +30,7 @@ INSERT INTO users (
     phone,
     is_active,
     is_superuser
-) VALUES (
-    $1,
-    $2,
-    $3,
-    $4,
-    $5,
-    $6,
-    $7,
-    $8
-) RETURNING id, email, password_hash, first_name, last_name, address, phone, is_active, is_superuser, created_at, updated_at
+) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING id, email, password_hash, first_name, last_name, address, phone, is_active, is_superuser, created_at, updated_at
 `
 
 type CreateUserParams struct {
